@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*', // Allow all origins, you can specify specific origins here
+    origin: '*',
     methods: ['GET', 'POST'],
   },
 });
@@ -31,7 +31,7 @@ io.on('connection', (socket: Socket) => {
 
   // Listen for location updates from drivers
   socket.on('updateLocation', (data: DriverData) => {
-    console.log("updated data received from the driver: ", data);
+    console.log('Updated data received from the driver: ', data);
 
     const { id, position } = data;
 
@@ -39,10 +39,10 @@ io.on('connection', (socket: Socket) => {
       console.error('Invalid data received:', data);
       return;
     }
-  
+
     drivers[id] = position;
 
-    console.log('Driver location stored:', {id, position});
+    console.log('Driver location stored:', { id, position });
 
     // Broadcast the updated location to all users
     io.emit('driverLocationUpdate', { id, position });
@@ -55,6 +55,8 @@ io.on('connection', (socket: Socket) => {
   });
 });
 
-server.listen(3001, () => {
-  console.log('Socket.IO server running on http://localhost:3001');
+// Use dynamic port for Railway or default to 3001
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`Socket.IO server running on http://localhost:${PORT}`);
 });
