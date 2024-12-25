@@ -1,0 +1,9 @@
+{
+    "name": "real-time-mobile-tracking",
+    "private": true,
+    "workspaces": [
+      "frontend",
+      "backend"
+    ]
+  }
+  
