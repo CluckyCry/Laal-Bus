@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/socket.io": {
-        target: process.env.VITE_BACKEND_URL || "http://localhost:5000", // Fallback to localhost for development
+        target: process.env.VITE_BACKEND_URL || "http://localhost:3001", // Fallback to localhost for development
         ws: true,
       },
     },
