@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "ESNext",
-    "jsx": "react",
-    "strict": true,
-    "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "skipLibCheck": true,
-    "resolveJsonModule": true
+    "target": "ES6", // Keep targeting ES6 for broad compatibility
+    "module": "ESNext", // Use ESNext for dynamic imports and tree-shaking
+    "jsx": "react-jsx", // Use the modern React JSX transform
+    "strict": true, // Enables all strict type-checking options
+    "esModuleInterop": true, // Allows ES module default imports
+    "moduleResolution": "Node", // Resolves modules in Node.js style
+    "skipLibCheck": true, // Skips type-checking of declaration files for faster builds
+    "resolveJsonModule": true, // Allows importing JSON files
+    "outDir": "dist", // Specifies the output folder for compiled files
+    "rootDir": "src", // Specifies the root folder of your source files
+    "forceConsistentCasingInFileNames": true // Enforce case-sensitive imports
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["src"], // Include all source files in the `src` folder
+  "exclude": ["node_modules", "dist"] // Exclude `node_modules` and build output
 }
