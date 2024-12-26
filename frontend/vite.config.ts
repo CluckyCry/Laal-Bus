@@ -6,8 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/socket.io": {
-        target: "http://localhost:5000",
-        ws: true, // Enable WebSocket proxying
+        target: process.env.VITE_BACKEND_URL || "http://localhost:5000", // Fallback to localhost for development
+        ws: true,
       },
     },
   },
