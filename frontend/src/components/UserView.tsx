@@ -33,8 +33,11 @@ const UserView: React.FC = () => {
       });
     });
     socket.on("driverLocations", (drivers) => {
-      console.log(drivers)
-      setDriverLocations([...drivers])
+      const updatedLocations = []
+      for (const key in drivers) {
+        updatedLocations.push({id: key, position: drivers[key]})
+      }
+      setDriverLocations(updatedLocations)
     })
 
     return () => {
