@@ -33,6 +33,8 @@ const UserView: React.FC = () => {
       });
     });
     socket.on("driverLocations", (drivers) => {
+      // whenever a user connects we get the stored driver positions and display them. 
+      // the reason you had to click on the driver page to get to display positions because it was emitting positions whenever you clicked on the driver page. (for Asad)
       const updatedLocations = []
       for (const key in drivers) {
         updatedLocations.push({id: key, position: drivers[key]})
