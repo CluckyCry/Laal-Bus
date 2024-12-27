@@ -48,7 +48,7 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("user-connected", () => {
-    // we know it is a user and not a drvier
+    // we know it is a user and not a drvier so we just send the stored drivers to them
     socket.emit("driverLocations", drivers);
   });
 
