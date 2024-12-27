@@ -3,8 +3,9 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import io from 'socket.io-client';
 
-const socket = io(import.meta.env.VITE_BACKEND_URL);
-
+const socket = io(import.meta.env.VITE_BACKEND_URL, {
+  autoConnect: false // Reason for autoconnect being false is written in UserView.tsx
+});
 
 const DriverView: React.FC = () => {
   const [position, setPosition] = useState<[number, number] | null>(null);
@@ -27,6 +28,8 @@ const DriverView: React.FC = () => {
 
   useEffect(() => {
     if (position) {
+      // connect the user to the server:
+      socket.connect();
       console.log('Socket ID:', socket.id); // Log socket.id
       socket.emit('updateLocation', { id: socket.id, position });
       console.log('Location emitted:', { id: socket.id, position }); // Log emitted data
