@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import io from 'socket.io-client';
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import io from "socket.io-client";
 
 // Connect to the backend
-const socket = io(import.meta.env.VITE_BACKEND_URL);
+const socket = io(import.meta.env.VITE_BACKEND_URL, {
+  autoConnect: false, // Don't autoconnect. The view isnt loading but the code is in fact loading which causes the client to connect twice. (Same goes for DrvierView)
+});
 
 interface DriverLocation {
   id: string;
@@ -14,10 +16,14 @@ interface DriverLocation {
 const UserView: React.FC = () => {
   const [driverLocations, setDriverLocations] = useState<DriverLocation[]>([]);
 
+  console.log(driverLocations)
+
   useEffect(() => {
+    socket.connect(); // connect the user to the server
+    socket.emit("user-connected")
     // Listen for driver location updates
-    socket.on('driverLocationUpdate', (data: DriverLocation) => {
-      console.log('Received driver location update:', data); 
+    socket.on("driverLocationUpdate", (data: DriverLocation) => {
+      console.log("Received driver location update:", data);
       setDriverLocations((prevLocations) => {
         // Update the driver's location if it already exists
         const updatedLocations = prevLocations.filter(
@@ -26,9 +32,13 @@ const UserView: React.FC = () => {
         return [...updatedLocations, data];
       });
     });
+    socket.on("driverLocations", (drivers) => {
+      console.log(drivers)
+      setDriverLocations([...drivers])
+    })
 
     return () => {
-      socket.off('driverLocationUpdate');
+      socket.off("driverLocationUpdate");
     };
   }, []);
 
@@ -38,7 +48,7 @@ const UserView: React.FC = () => {
       <MapContainer
         center={[24.8607, 67.0011]}
         zoom={13}
-        style={{ height: 'calc(100% - 60px)' }}
+        style={{ height: "calc(100% - 60px)" }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
