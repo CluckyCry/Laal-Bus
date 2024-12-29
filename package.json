@@ -2,8 +2,10 @@
     "name": "real-time-mobile-tracking",
     "private": true,
     "workspaces": [
-      "frontend",
-      "backend"
-    ]
-  }
-  
+        "frontend",
+        "backend"
+    ],
+    "devDependencies": {
+        "rollup": "^4.29.1"
+    }
+}
