@@ -14,6 +14,12 @@ const io = new Server(server, {
 
 app.use(cors());
 
+//how to add this
+app.get("/", (req, res) => {
+  res.send("WebSocket server is running");
+});
+
+
 interface DriverLocation {
   latitude: number;
   longitude: number;

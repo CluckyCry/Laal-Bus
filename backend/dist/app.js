@@ -16,6 +16,10 @@ const io = new socket_io_1.Server(server, {
     },
 });
 app.use((0, cors_1.default)());
+//how to add this
+app.get("/", (req, res) => {
+    res.send("WebSocket server is running");
+});
 const drivers = {};
 io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
