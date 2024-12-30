@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "../assets/leafletIcons";
 import io from "socket.io-client";
 
 // Connect to the backend
 const socket = io(import.meta.env.VITE_BACKEND_URL, {
-  autoConnect: false, // Don't autoconnect. The view isnt loading but the code is in fact loading which causes the client to connect twice. (Same goes for DrvierView)
+  autoConnect: false, // Don't autoconnect. The view isnt loading but the code is in fact loading which causes the client to connect twice. (Same goes for DriverView)
 });
 
 interface DriverLocation {
@@ -16,11 +17,12 @@ interface DriverLocation {
 const UserView: React.FC = () => {
   const [driverLocations, setDriverLocations] = useState<DriverLocation[]>([]);
 
-  console.log(driverLocations)
+  console.log(driverLocations);
 
   useEffect(() => {
     socket.connect(); // connect the user to the server
-    socket.emit("user-connected")
+    socket.emit("user-connected");
+
     // Listen for driver location updates
     socket.on("driverLocationUpdate", (data: DriverLocation) => {
       console.log("Received driver location update:", data);
@@ -32,18 +34,25 @@ const UserView: React.FC = () => {
         return [...updatedLocations, data];
       });
     });
+
+   // Fetch stored driver locations upon user connection
     socket.on("driverLocations", (drivers) => {
-      // whenever a user connects we get the stored driver positions and display them. 
-      // the reason you had to click on the driver page to get to display positions because it was emitting positions whenever you clicked on the driver page. (for Asad)
-      const updatedLocations = []
+      const updatedLocations = [];
       for (const key in drivers) {
-        updatedLocations.push({id: key, position: drivers[key]})
+        updatedLocations.push({ id: key, position: drivers[key] });
       }
-      setDriverLocations(updatedLocations)
-    })
+      setDriverLocations(updatedLocations);
+    });
+
+    // Handle driver disconnections
+    socket.on("driverCheck", (socketId) => {
+      setDriverLocations((prevDrivers) =>
+        prevDrivers.filter((driverObj) => driverObj.id !== socketId)
+      );
+    });
 
     return () => {
-      socket.off("driverLocationUpdate");
+      socket.offAny(); // Remove all listeners to prevent memory leaks
     };
   }, []);
 

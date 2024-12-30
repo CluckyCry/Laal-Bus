@@ -1,3 +1,4 @@
 /backend
-railwayignore
+.railwayignore
+/frontend/dist
 .git/

@@ -10,7 +10,12 @@
     "resolveJsonModule": true, // Allows importing JSON files
     "outDir": "dist", // Specifies the output folder for compiled files
     "rootDir": "src", // Specifies the root folder of your source files
-    "forceConsistentCasingInFileNames": true // Enforce case-sensitive imports
+    "forceConsistentCasingInFileNames": true, // Enforce case-sensitive imports
+    "baseUrl": "./", // Base URL for resolving non-relative imports
+    "paths": {
+      "@/*": ["src/*"], // Import alias for the `src` directory
+      "@/components/*": ["src/components/*"] // Alias for the `components` folder
+    }
   },
   "include": ["src"], // Include all source files in the `src` folder
   "exclude": ["node_modules", "dist"] // Exclude `node_modules` and build output

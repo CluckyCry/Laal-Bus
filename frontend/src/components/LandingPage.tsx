@@ -1,29 +1,145 @@
-import React from 'react';
+'use client'
+
+import { MapPin, Bus, User } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Navbar } from './Navbar'
 
 type LandingPageProps = {
-  setRole: (role: 'none' | 'driver' | 'user') => void;
-};
+  setRole: (role: 'none' | 'driver' | 'user') => void
+}
 
-const LandingPage: React.FC<LandingPageProps> = ({ setRole }) => {
+export default function LandingPage({ setRole }: LandingPageProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-4xl font-bold mb-8">Welcome to Bus Tracker</h1>
-      <div className="space-x-4">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => setRole('driver')}
-        >
-          I'm a Driver
-        </button>
-        <button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => setRole('user')}
-        >
-          I'm a User
-        </button>
+    <div className="relative min-h-screen bg-gradient-to-b from-red-50 to-white">
+      {/* Background Video */}
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        src="/RedBusBG.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
+
+      {/* Overlay Content */}
+      <div className="relative z-10">
+    <Navbar />
+        <div className="container mx-auto px-4">
+          {/* Hero Section */}
+          <div className="flex flex-col lg:flex-row items-center justify-between py-12 lg:py-20">
+            {/* Hero Content */}
+            <div className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0">
+              <motion.h1
+                className="text-4xl lg:text-6xl font-bold text-white mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Track Your Bus in{' '}
+                <span className="text-red-600">Real-Time</span>
+              </motion.h1>
+              <motion.p
+                className="text-xl text-gray-300 mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Know exactly where your bus is and when it will arrive. Safe,
+                reliable, and convenient tracking for everyone.
+              </motion.p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Button
+                  size="lg"
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  onClick={() => setRole('driver')}
+                >
+                  <Bus className="mr-2 h-5 w-5" />
+                  I'm a Driver
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-red-600 text-red-600 hover:bg-red-50"
+                  onClick={() => setRole('user')}
+                >
+                  <User className="mr-2 h-5 w-5" />
+                  I'm a Passenger
+                </Button>
+              </div>
+            </div>
+
+            {/* Hero Card */}
+            <div className="lg:w-1/2">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-red-100 rounded-full blur-3xl opacity-30"></div>
+                <Card className="relative bg-white/50 backdrop-blur-sm border-0 shadow-xl p-6 rounded-2xl">
+                  <div className="aspect-square max-w-[500px] rounded-xl bg-gray-100 p-4">
+                    <div className="h-full w-full rounded-lg bg-gray-200 relative">
+                      <div className="absolute top-4 left-4 right-4">
+                        <div className="h-10 bg-white rounded-lg shadow-sm flex items-center px-4 gap-2">
+                          <MapPin className="h-5 w-5 text-red-500" />
+                          <span className="text-gray-400">Search your destination...</span>
+                        </div>
+                      </div>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="bg-red-600 text-white p-4 rounded-lg shadow-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold">Next Bus</span>
+                            <span className="bg-red-500 px-2 py-1 rounded text-sm">5 min</span>
+                          </div>
+                          <div className="text-sm text-red-100">Route 42 - Downtown Express</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </div>
+
+          {/* Features Section */}
+          <div className="py-12 lg:py-20">
+            <h2 className="text-3xl font-bold text-center mb-12 text-white">Why Choose Our Bus Tracker?</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LandingPage;
+const features = [
+  {
+    title: 'Real-Time Tracking',
+    description: 'Know exactly where your bus is with live GPS tracking and estimated arrival times.',
+    icon: <MapPin className="w-6 h-6 text-red-600" />,
+  },
+  {
+    title: 'Multiple Routes',
+    description: 'Access information for all bus routes in your city with just a few taps.',
+    icon: <Bus className="w-6 h-6 text-red-600" />,
+  },
+  {
+    title: 'User Friendly',
+    description: 'Simple and intuitive interface designed for both drivers and passengers.',
+    icon: <User className="w-6 h-6 text-red-600" />,
+  },
+]
