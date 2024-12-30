@@ -9,8 +9,8 @@ delete (L.Icon.Default.prototype as any)._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
-  iconRetinaUrl: markerShadow,
-  shadowUrl: markerIcon2x
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow
 });
 
 export default L;
