@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import "../assets/leafletIcons"
 import io from 'socket.io-client';
 
 const socket = io(import.meta.env.VITE_BACKEND_URL, {
