@@ -42,16 +42,11 @@ const UserView: React.FC = () => {
     });
     // whenever someone leaves, it is necessary to check if the driver left to update users' maps.
     socket.on("driverCheck", (socketId) => {
-      driverLocations.forEach((driverData) => {
-        if (driverData.id === socketId) {
-          // A driver left, we should update the map.
-          setDriverLocations((previousDrivers) => (previousDrivers.filter((driverObj) => driverObj.id !== socketId)))
-        }
-      })
+     setDriverLocations((prevDrivers) => prevDrivers.filter((driverObj) => driverObj.id !== socketId))
     });
 
     return () => {
-      socket.off("driverLocationUpdate");
+      socket.offAny();
     };
   }, []);
 
