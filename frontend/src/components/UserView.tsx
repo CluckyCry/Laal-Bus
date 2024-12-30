@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import "../assets/leafletIcons"
+import "../assets/leafletIcons";
 import io from "socket.io-client";
 
 // Connect to the backend
@@ -17,11 +17,9 @@ interface DriverLocation {
 const UserView: React.FC = () => {
   const [driverLocations, setDriverLocations] = useState<DriverLocation[]>([]);
 
-  console.log(driverLocations)
-
   useEffect(() => {
     socket.connect(); // connect the user to the server
-    socket.emit("user-connected")
+    socket.emit("user-connected"); // Only emits from the user.
     // Listen for driver location updates
     socket.on("driverLocationUpdate", (data: DriverLocation) => {
       console.log("Received driver location update:", data);
@@ -33,15 +31,24 @@ const UserView: React.FC = () => {
         return [...updatedLocations, data];
       });
     });
+    // whenever a user connects we get the stored driver positions and display them.
     socket.on("driverLocations", (drivers) => {
-      // whenever a user connects we get the stored driver positions and display them. 
       // the reason you had to click on the driver page to get to display positions because it was emitting positions whenever you clicked on the driver page. (for Asad)
-      const updatedLocations = []
+      const updatedLocations = [];
       for (const key in drivers) {
-        updatedLocations.push({id: key, position: drivers[key]})
+        updatedLocations.push({ id: key, position: drivers[key] });
       }
-      setDriverLocations(updatedLocations)
-    })
+      setDriverLocations(updatedLocations);
+    });
+    // whenever someone leaves, it is necessary to check if the driver left to update users' maps.
+    socket.on("driverCheck", (socketId) => {
+      driverLocations.forEach((driverData) => {
+        if (driverData.id === socketId) {
+          // A driver left, we should update the map.
+          setDriverLocations((previousDrivers) => (previousDrivers.filter((driverObj) => driverObj.id !== socketId)))
+        }
+      })
+    });
 
     return () => {
       socket.off("driverLocationUpdate");
