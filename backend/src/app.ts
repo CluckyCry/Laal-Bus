@@ -58,9 +58,9 @@ io.on("connection", (socket: Socket) => {
     socket.emit("driverLocations", drivers);
   });
 
-  // Handle disconnection
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+   // Handle disconnection
+   socket.on("disconnect", () => {
+    io.emit("driverCheck", socket.id) // Upon disconnection, we emit to check if the client which left is a driver or not. If it is, we stop it from displaying on users' map.
     delete drivers[socket.id];
   });
 });
