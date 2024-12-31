@@ -1,16 +1,55 @@
 'use client'
 
-import { MapPin, Bus, User } from 'lucide-react'
+import React, { useState } from 'react'
+import { MapPin, Bus, User, Search } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { Navbar } from './Navbar'
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
 
 type LandingPageProps = {
   setRole: (role: 'none' | 'driver' | 'user') => void
 }
 
+// Custom component to handle search and map control
+function SearchHandler({ searchQuery }: { searchQuery: string }) {
+  const map = useMap()
+
+  React.useEffect(() => {
+    const handleSearch = async () => {
+      try {
+        if (!searchQuery) return
+
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            searchQuery
+          )}`
+        )
+        const data = await response.json()
+
+        if (data && data.length > 0) {
+          const { lat, lon } = data[0]
+          const newCenter: [number, number] = [parseFloat(lat), parseFloat(lon)]
+          map.panTo(newCenter)
+        }
+      } catch (error) {
+        console.error('Error searching location:', error)
+      }
+    }
+
+    handleSearch()
+  }, [searchQuery, map])
+
+  return null
+}
+
 export default function LandingPage({ setRole }: LandingPageProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [mapCenter, setMapCenter] = useState<[number, number]>([24.8607, 67.0011]) // Default coordinates
+
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-red-50 to-white overflow-x-hidden">
       {/* Background Video */}
@@ -27,9 +66,7 @@ export default function LandingPage({ setRole }: LandingPageProps) {
       <div className="relative z-10">
         <Navbar />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Hero Section */}
           <div className="flex flex-col lg:flex-row items-center justify-between py-12 lg:py-20 space-y-8 lg:space-y-0 lg:space-x-8">
-            {/* Hero Content */}
             <div className="lg:w-1/2 text-center lg:text-left w-full">
               <motion.h1
                 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4 mt-8"
@@ -70,28 +107,47 @@ export default function LandingPage({ setRole }: LandingPageProps) {
               </div>
             </div>
 
-            {/* Hero Card */}
             <div className="lg:w-1/2 w-full max-w-md mx-auto">
               <div className="relative">
                 <div className="absolute -inset-4 bg-red-100 rounded-full blur-3xl opacity-30"></div>
                 <Card className="relative bg-white/50 backdrop-blur-sm border-0 shadow-xl p-4 sm:p-6 rounded-2xl">
-                  <div className="aspect-square w-full rounded-xl bg-gray-100 p-4">
-                    <div className="h-full w-full rounded-lg bg-gray-200 relative">
-                      <div className="absolute top-4 left-4 right-4">
-                        <div className="h-10 bg-white rounded-lg shadow-sm flex items-center px-4 gap-2">
-                          <MapPin className="h-5 w-5 text-red-500" />
-                          <span className="text-gray-400 text-sm sm:text-base">Search your destination...</span>
+                  <div className="aspect-square w-full rounded-xl bg-gray-200 p-4">
+                    <div className="h-full w-full rounded-lg relative overflow-hidden">
+                      <div className="absolute top-4 left-4 right-4 z-[1000]">
+                        <div className="flex items-center bg-white rounded-lg shadow-sm">
+                          <MapPin className="ml-3 h-5 w-5 text-red-500" />
+                          <Input
+                            className="border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
+                            placeholder="Search your destination..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) =>
+                              setSearchQuery((e.target as HTMLInputElement).value) 
+                            }
+                          />
+                          <button
+                            onClick={() => setSearchQuery(searchQuery)}
+                            className="p-2 hover:bg-gray-100 rounded-r-lg"
+                          >
+                            <Search className="h-5 w-5 text-gray-500" />
+                          </button>
                         </div>
                       </div>
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <div className="bg-red-600 text-white p-4 rounded-lg shadow-lg">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-semibold text-sm sm:text-base">Next Bus</span>
-                            <span className="bg-red-500 px-2 py-1 rounded text-xs sm:text-sm">5 min</span>
-                          </div>
-                          <div className="text-xs sm:text-sm text-red-100">Route 42 - Downtown Express</div>
-                        </div>
-                      </div>
+
+                      <MapContainer
+                        center={mapCenter}
+                        zoom={13}
+                        scrollWheelZoom={false}
+                        className="h-full w-full z-0"
+                      >
+                        <TileLayer
+                          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <SearchHandler searchQuery={searchQuery} />
+                      </MapContainer>
+
+                      
                     </div>
                   </div>
                 </Card>
