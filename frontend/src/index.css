@@ -95,22 +95,16 @@
 
 @font-face {
   font-family: 'Agharti';
-  src: url('assets\fonts\AghartiFamilyTest-CondensedBold-BF66722eded25c3.otf') format('woff2'),
-       url('assets\fonts\AghartiFamilyTest-CondensedBold-BF66722eded25c3.otf') format('woff');
+  src: url('/fonts/AghartiFamilyTest-CondensedBold-BF66722eded25c3.otf') format('woff2'),
+       url('/fonts/AghartiFamilyTest-CondensedBold-BF66722eded25c3.otf') format('woff');
   font-weight: bold;
   font-style: normal;
 }
-@font-face {
-  font-family: 'Agharti';
-  src: url('assets/fonts/AghartiFamilyTest-CondensedLight-BF66722edf01ac7.otf') format('woff2'),
-       url('assets/fonts/AghartiFamilyTest-CondensedLight-BF66722edf01ac7.otf') format('woff');
-  font-weight: 300; /* Light weight */
-  font-style: normal;
-}
+
 @font-face {
   font-family: 'Old Money';
-  src: url('assets/fonts/OldMoneyV1a.otf') format('woff2'),
-       url('assets/fonts/OldMoneyV1a.otf') format('woff');
+  src: url('/fonts/OldMoneyV1a.otf') format('woff2'),
+       url('/fonts/OldMoneyV1a.otf') format('woff');
   font-weight: normal;
   font-style: normal;
 }

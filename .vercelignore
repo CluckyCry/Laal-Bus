@@ -2,4 +2,4 @@
 .railwayignore
 /frontend/dist
 .git/
-license
+LICENSE
