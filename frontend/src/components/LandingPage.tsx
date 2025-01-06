@@ -65,20 +65,20 @@ export default function LandingPage({ setRole }: LandingPageProps) {
       {/* Overlay Content */}
       <div className="relative z-10">
         <Navbar />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 ">
           <div className="flex flex-col lg:flex-row items-center justify-between py-12 lg:py-20 space-y-8 lg:space-y-0 lg:space-x-8">
             <div className="lg:w-1/2 text-center lg:text-left w-full">
               <motion.h1
-                className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4 mt-8"
+                className="text-3xl sm:text-4xl lg:text-5xl xl:text-8xl font-agharti font-bold text-white mb-4 mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Track Your Bus in{' '}
-                <span className="text-red-600">Real-Time</span>
+                TRACK YOUR BUS IN{' '} <br></br>
+                <span className="text-red-600">REAL-TIME</span>
               </motion.h1>
               <motion.p
-                className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8"
+                className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 font-oldMoney "
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
@@ -157,22 +157,24 @@ export default function LandingPage({ setRole }: LandingPageProps) {
 
           {/* Features Section */}
           <div className="py-12 lg:py-20">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 text-white">Why Choose Our Bus Tracker?</h2>
+            <h2 className="text-5xl lg:text-5xl xl:text-8xl font-bold text-center mb-8 sm:mb-12 text-white font-agharti font-bold">
+              WHY CHOOSE OUR <span className="text-red-600">BUS</span> TRACKER?
+            </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600">{feature.description}</p>
-                </motion.div>
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-black p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                {React.cloneElement(feature.icon, { className: "w-6 h-6 text-red-600" })}
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-red-600">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-gray-300">{feature.description}</p>
+              </motion.div>
               ))}
             </div>
           </div>

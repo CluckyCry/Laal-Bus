@@ -69,3 +69,48 @@
 .leaflet-control-attribution {
   display: none;
 }
+.grid-background {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 0, 128, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 0, 128, 0.1) 1px, transparent 1px);
+  animation: grid-animation 20s linear infinite;
+}
+
+@keyframes grid-animation {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-background {
+    background-size: 30px 30px;
+  }
+}
+
+
+@font-face {
+  font-family: 'Agharti';
+  src: url('assets\fonts\AghartiFamilyTest-CondensedBold-BF66722eded25c3.otf') format('woff2'),
+       url('assets\fonts\AghartiFamilyTest-CondensedBold-BF66722eded25c3.otf') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Agharti';
+  src: url('assets/fonts/AghartiFamilyTest-CondensedLight-BF66722edf01ac7.otf') format('woff2'),
+       url('assets/fonts/AghartiFamilyTest-CondensedLight-BF66722edf01ac7.otf') format('woff');
+  font-weight: 300; /* Light weight */
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Old Money';
+  src: url('assets/fonts/OldMoneyV1a.otf') format('woff2'),
+       url('assets/fonts/OldMoneyV1a.otf') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}

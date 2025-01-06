@@ -3,7 +3,7 @@ import LandingPage from './components/LandingPage';
 import DriverView from './components/DriverView';
 import UserView from './components/UserView';
 import DriverLoginPage from './components/DriverLoginPage'; // New component
-
+import Footer from './components/footer';
 type Role = 'none' | 'driver' | 'user';
 
 const App: React.FC = () => {
@@ -31,6 +31,7 @@ const App: React.FC = () => {
       {role === 'none' && <LandingPage setRole={setRole} />}
       {role === 'driver' && <DriverAuthWrapper />}
       {role === 'user' && <UserView />}
+    <Footer />
     </div>
   );
 };

@@ -1,64 +1,99 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Menu, X, Search, ChevronDown } from 'lucide-react'
-import laalBusLogo from '../assets/laabuslogo1.png'
+import { useState, useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Menu, X, Search, ChevronDown } from 'lucide-react';
 
 export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null); // Reference to the dropdown container
 
   const routes = [
-  { name: 'Route 1', subscript: 'Model Colony to Dockyard' },
-  { name: 'Route 2', subscript: 'North Karachi to Indus Hospital' },
-  { name: 'Route 3', subscript: 'UP Mor to Nasir Jump' },
-  { name: 'Route 4', subscript: 'Power House to Keamari' },
-  { name: 'Route 9', subscript: 'Gulshan e Hadeed to Tower' },
-  { name: 'Route 10', subscript: 'Numaish to Ibrahim Hyderi' },
-  { name: 'Route 11', subscript: 'Shireen Jinnah Colony to Miran Nakka Lyari' },
-  { name: 'Route 12', subscript: 'Nadi Kinara Khokrapar - Lucky Star Saddar' },
-  { name: 'EV-1',     subscript: 'CMH Malir to Abdullah Shah Ghazi Shrine' },
-  { name: 'EV-2',     subscript: 'Bahria Town to Malir Halt' },
-  { name: 'EV-3',     subscript: 'Malir Cantt Check Post 5 to Numaish' },
-];
+    { name: 'Route 1', subscript: 'Model Colony to Dockyard' },
+    { name: 'Route 2', subscript: 'North Karachi to Indus Hospital' },
+    { name: 'Route 3', subscript: 'UP Mor to Nasir Jump' },
+    { name: 'Route 4', subscript: 'Power House to Keamari' },
+    { name: 'Route 9', subscript: 'Gulshan e Hadeed to Tower' },
+    { name: 'Route 10', subscript: 'Numaish to Ibrahim Hyderi' },
+    { name: 'Route 11', subscript: 'Shireen Jinnah Colony to Miran Nakka Lyari' },
+    { name: 'Route 12', subscript: 'Nadi Kinara Khokrapar - Lucky Star Saddar' },
+    { name: 'EV-1', subscript: 'CMH Malir to Abdullah Shah Ghazi Shrine' },
+    { name: 'EV-2', subscript: 'Bahria Town to Malir Halt' },
+    { name: 'EV-3', subscript: 'Malir Cantt Check Post 5 to Numaish' },
+  ];
 
+  // Handle clicks outside the dropdown
+  useEffect(() => {
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    // Attach event listener
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      // Cleanup event listener
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Disable scrolling on the main page when the dropdown or mobile menu is open
+  useEffect(() => {
+    if (isDropdownOpen || isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = ''; // Clean up on unmount
+    };
+  }, [isDropdownOpen, isMenuOpen]);
 
   return (
-    <nav className="fixed w-full z-20 bg-transparent">
+    <nav className="fixed w-full z-20 bg-transparent font-oldMoney font-semibold ">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Left Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="/" className="text-sm font-medium text-white hover:text-white/80 transition-colors">
+            <a href="/" className="text-sm  font-semibold text-white hover:text-white/80 transition-colors ml-4">
               Home
             </a>
-            <div
-              className="relative group"
-            >
+            <div className="relative group" ref={dropdownRef}>
               <button
-                className="text-sm font-medium text-white hover:text-white/80 transition-colors flex items-center"
+                className="text-sm  font-semibold text-white hover:text-white/80 transition-colors flex items-center"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 Routes <ChevronDown className="ml-1 h-4 w-4" />
               </button>
-              <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                  {routes.map((route, index) => (
-                    <a
-                      key={index}
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      role="menuitem"
-                    >
-                      {route.name} <sub className="text-xs text-gray-500">{route.subscript}</sub>
-                    </a>
-                  ))}
+              {isDropdownOpen && (
+                <div
+                  className="absolute left-0 mt-2 w-96 max-h-60 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="options-menu"
+                >
+                  <div className="grid grid-cols-2 gap-4 py-2 px-4">
+                    {routes.map((route, index) => (
+                      <a
+                        key={index}
+                        href="#"
+                        className="block text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-md px-2 py-1"
+                      >
+                        {route.name} <sub className="text-xs text-gray-500">{route.subscript}</sub>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             <a
               href="https://github.com/Asad-noob69/RedBus-API"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-white hover:text-white/80 transition-colors"
+              className="text-sm font-semibold text-white hover:text-white/80 transition-colors"
             >
               API
             </a>
@@ -78,12 +113,8 @@ export function Navbar() {
 
           {/* Center Logo */}
           <div className="absolute left-1/2 transform -translate-x-1/2">
-            <a href="/" className="transition-colors">
-              <img 
-                src={laalBusLogo} 
-                alt="LaalBus Logo" 
-                className="h-14 w-22" 
-              />
+            <a href="/" className="text-3xl  font-bold text-white transition-colors">
+              LAALBUS
             </a>
           </div>
 
@@ -109,20 +140,23 @@ export function Navbar() {
             <div>
               <button
                 className="w-full text-left px-3 py-2 text-sm text-white hover:text-white/80 hover:bg-white/10 rounded-md transition-colors flex items-center justify-between"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 Routes <ChevronDown className="h-4 w-4" />
-              </button> 
-              <div className="pl-6 space-y-1">
-                {routes.map((route, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    className="block px-3 py-2 text-sm text-white hover:text-white/80 hover:bg-white/10 rounded-md transition-colors"
-                  >
-                    {route.name} <sub className="text-xs text-gray-300">{route.subscript}</sub>
-                  </a>
-                ))}
-              </div>
+              </button>
+              {isDropdownOpen && (
+                <div className="pl-6 space-y-1">
+                  {routes.map((route, index) => (
+                    <a
+                      key={index}
+                      href="#"
+                      className="block px-3 py-2 text-sm text-white hover:text-white/80 hover:bg-white/10 rounded-md transition-colors"
+                    >
+                      {route.name} <sub className="text-xs text-gray-300">{route.subscript}</sub>
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
             <a
               href="https://github.com/Asad-noob69/RedBus-API"
@@ -136,5 +170,5 @@ export function Navbar() {
         </div>
       )}
     </nav>
-  )
+  );
 }
