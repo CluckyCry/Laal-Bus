@@ -1,15 +1,26 @@
+'use client'
+
 import { FC } from 'react'
 import { Twitter, Linkedin, Github } from 'lucide-react'
 
 const Footer: FC = () => {
-    return (
-        <footer className="bg-black text-white py-12 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-6 md:space-y-0">
-            {/* Logo and Copyright */}
-            <div className="space-y-4">
-              <div className="text-2xl font-bold">LaalBus</div>
-              <p className="text-gray-400 text-sm">
+  return (
+    <footer className="bg-black text-white py-12 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto pt-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-6 md:space-y-0">
+          {/* Logo, Image, and Copyright */}
+          <div className="space-y-4">
+            <div className="flex flex-col items-center md:items-start">
+                <div className="w-15 h-15 md:w-24 md:h-24 relative mb-4">
+                <img
+                  src="./busfavicon.png"
+                  alt="LaalBus Logo"
+                  className="rounded-full w-full h-full object-contain"
+                />
+                </div>
+                <div className="text-2xl font-bold">LaalBus</div>
+              </div>
+              <p className="text-gray-400 text-sm text-center md:text-left">
                 © {new Date().getFullYear()} LaalBus Solutions Private Limited.<br className="md:hidden" /> All rights reserved.
               </p>
             </div>
@@ -21,47 +32,48 @@ const Footer: FC = () => {
                   Contact
                 </a>
                 <a href="/about" className="hover:text-gray-300 transition-colors">
-                About
+                  About
+                </a>
+              </div>
+            
+              {/* Social Links */}
+              <div className="flex items-center space-x-4">
+                <a 
+                  href="https://x.com/asadaliabbasi_" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  <Twitter className="w-5 h-5" />
+                  <span className="sr-only">Twitter</span>
+                </a>
+                <a 
+                  href="https://www.linkedin.com/in/asadali1234/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  <Linkedin className="w-5 h-5" />
+                  <span className="sr-only">LinkedIn</span>
+                </a>
+                <a 
+                  href="https://github.com/Asad-noob69" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  <Github className="w-5 h-5" />
+                  <span className="sr-only">GitHub</span>
+                </a>
+              </div>
+            
+              <a 
+                href="mailto:asadaliabbasi787@gmail.com"
+                className="block text-gray-400 hover:text-gray-300 transition-colors"
+              >
+                asadaliabbasi787@gmail.com
               </a>
             </div>
-            
-            {/* Social Links */}
-            <div className="flex items-center space-x-4">
-              <a 
-                href="https://x.com/asadaliabbasi_" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-gray-300 transition-colors"
-              >
-                <Twitter className="w-5 h-5" />
-                <span className="sr-only">Twitter</span>
-              </a>
-              <a 
-                href="https://www.linkedin.com/in/asadali1234/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-gray-300 transition-colors"
-              >
-                <Linkedin className="w-5 h-5" />
-                <span className="sr-only">LinkedIn</span>
-              </a>
-              <a 
-                href="https://github.com/Asad-noob69" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-gray-300 transition-colors"
-              >
-                <Github className="w-5 h-5" />
-                <span className="sr-only">GitHub</span>
-              </a>
-            </div>
-            
-            <a 
-              href="mailto:asadaliabbasi787@gmail.com"
-              className="block text-gray-400 hover:text-gray-300 transition-colors"
-            >
-              asadaliabbasi787@gmail.com
-            </a>
           </div>
         </div>
 
@@ -81,9 +93,8 @@ const Footer: FC = () => {
           </svg>
           <span className="sr-only">Chat on WhatsApp</span>
         </a>
-      </div>
-    </footer>
-  )
+      </footer>
+    )
 }
 
 export default Footer
