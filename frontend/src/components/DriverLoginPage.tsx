@@ -1,49 +1,55 @@
-'use client'
-
-import React, { useState } from 'react'
-import { User, LockIcon, Loader2 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { User, LockIcon, Loader2 } from 'lucide-react';
+import io from 'socket.io-client';
 
 interface DriverLoginPageProps {
-  onSuccessfulLogin: () => void
-  onCancel: () => void
+  onSuccessfulLogin: () => void;
+  onCancel: () => void;
 }
 
 const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, onCancel }) => {
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      if (password === 'secret123') {
-        onSuccessfulLogin()
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/driver/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const socket = io(import.meta.env.VITE_BACKEND_URL);
+        socket.emit('driver-login');
+        onSuccessfulLogin();
       } else {
-        setError('Incorrect password')
+        setError(data.message || 'Login failed');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.')
+      setError('An error occurred. Please try again.');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden px-4 sm:px-6 lg:px-8">
-      {/* Animated Grid Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-purple-500/20" />
         <div className="grid-background absolute inset-0" />
       </div>
 
-      {/* Background Video */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-50"
         src="/RedBusBG.mp4"
@@ -59,7 +65,6 @@ const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, on
         transition={{ duration: 0.3 }}
         className="w-full max-w-sm bg-black/30 border border-white/20 rounded-2xl shadow-2xl p-6 sm:p-8 relative z-10 backdrop-blur-xl transform transition-all duration-300 hover:backdrop-blur-2xl hover:bg-black/40"
       >
-        {/* Avatar Container */}
         <motion.div 
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -72,7 +77,6 @@ const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, on
           </div>
         </motion.div>
 
-        {/* Title */}
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -82,7 +86,6 @@ const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, on
           <h1 className="text-white text-xl sm:text-2xl font-bold text-center">Driver Login</h1>
         </motion.div>
 
-        {/* Form */}
         <motion.form 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -143,20 +146,11 @@ const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, on
               Cancel
             </button>
           </div>
-
-          <div className="text-center">
-            <a
-              href="#"
-              className="text-xs sm:text-sm text-gray-400 hover:text-white transition-colors duration-300 hover:underline underline-offset-4"
-            >
-              Forgot your password?
-            </a>
-          </div>
         </motion.form>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default DriverLoginPage
+export default DriverLoginPage;
 

@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import { LatLngExpression } from 'leaflet';
@@ -8,7 +6,6 @@ import { AlertCircle, MessageSquare, User, Settings, Loader2, MapIcon, Share2Ico
 import 'leaflet/dist/leaflet.css';
 import io from "socket.io-client";
 import '../assets/leafletIcons';
-
 
 interface DriverLocation {
   id: string;
@@ -20,8 +17,8 @@ const UserView: React.FC = () => {
   const [driverLocations, setDriverLocations] = useState<DriverLocation[]>([]);
   const [followingDriverId, setFollowingDriverId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeDriversCount, setActiveDriversCount] = useState(0);
 
-  // Socket connection
   const socketRef = useRef(
     io(import.meta.env.VITE_BACKEND_URL, {
       autoConnect: false,
@@ -33,7 +30,6 @@ const UserView: React.FC = () => {
     socket.connect();
     socket.emit("user-connected");
 
-    // Listen for driver location updates
     socket.on("driverLocationUpdate", (data: DriverLocation) => {
       console.log("Received driver location update:", data);
 
@@ -83,13 +79,29 @@ const UserView: React.FC = () => {
       );
     });
 
+    const fetchActiveDriversCount = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/drivers/active-count`);
+        const data = await response.json();
+        setActiveDriversCount(data.count);
+      } catch (error) {
+        console.error("Error fetching active drivers count:", error);
+      }
+    };
+
+    fetchActiveDriversCount();
+
+    socket.on("active-drivers-updated", fetchActiveDriversCount);
+
+    const intervalId = setInterval(fetchActiveDriversCount, 30000);
+
     return () => {
       socket.offAny();
       socket.disconnect();
+      clearInterval(intervalId);
     };
   }, []);
 
-  // Component to handle map center when following a driver
   const FollowDriverView = ({ driverId }: { driverId: string }) => {
     const map = useMap();
     const driver = driverLocations.find(d => d.id === driverId);
@@ -133,8 +145,12 @@ const UserView: React.FC = () => {
         animate={{ y: 0, opacity: 1 }}
         className="relative z-10"
       >
-            <div className="flex justify-between items-center p-4 bg-black/30 backdrop-blur-xl border-b border-white/10">
-            <h2 className="text-5xl font-bold text-white flex-grow text-center font-agharti">PASSENGER VIEW</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-center p-4 bg-black/30 backdrop-blur-xl border-b border-white/10">
+          <h2 className="text-xl sm:text-5xl font-bold text-white flex-grow text-center font-agharti">PASSENGER VIEW</h2>
+          <div className="text-white text-xs sm:text-lg flex items-center mt-2 sm:mt-0">
+            <div className={`w-3 h-3 rounded-full mr-2 ${activeDriversCount > 0 ? 'bg-green-500' : 'bg-green-500/50'}`}></div>
+            {activeDriversCount} Active Driver{activeDriversCount !== 1 ? 's' : ''}
+          </div>
         </div>
       </motion.div>
 
