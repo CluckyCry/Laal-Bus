@@ -95,7 +95,7 @@ const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, on
         >
           <div>
             <label htmlFor="password" className="block text-sm text-gray-400 mb-1 sm:mb-2 font-medium">
-              PASSWORD
+              secret123
             </label>
             <div className="relative group">
               <input
