@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import { LatLngExpression } from 'leaflet';
-import { motion } from 'framer-motion';
-import { AlertCircle, MessageSquare, User, Settings, Loader2, MapIcon, Share2Icon, BookmarkIcon, CompassIcon, UserIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AlertCircle, MessageSquare, User, Settings, Loader2, Search, MapIcon, Share2Icon, BookmarkIcon, CompassIcon, UserIcon, X, MapPin} from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import io from "socket.io-client";
 import '../assets/leafletIcons';
@@ -13,11 +13,22 @@ interface DriverLocation {
   path?: LatLngExpression[];
 }
 
+interface SearchResult {
+  display_name: string;
+  lat: number;
+  lon: number;
+}
+
 const UserView: React.FC = () => {
   const [driverLocations, setDriverLocations] = useState<DriverLocation[]>([]);
   const [followingDriverId, setFollowingDriverId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeDriversCount, setActiveDriversCount] = useState(0);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showSearchBox, setShowSearchBox] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<SearchResult | null>(null);
 
   const socketRef = useRef(
     io(import.meta.env.VITE_BACKEND_URL, {
@@ -115,21 +126,48 @@ const UserView: React.FC = () => {
     return null;
   };
 
-  const handleEmergency = () => {
-    console.log("Emergency button pressed");
-  };
-
-  const handleMessage = () => {
-    console.log("Message button pressed");
-  };
-
   const handleProfile = () => {
-    console.log("Profile button pressed");
+    setShowProfile(!showProfile);
   };
 
-  const handleSettings = () => {
-    console.log("Settings button pressed");
+  const mapRef = useRef<any>(null);
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`
+      );
+      const results: SearchResult[] = await response.json();
+      
+      setSearchResults(results);
+      
+      if (results.length > 0) {
+        const firstResult = results[0];
+        setSelectedLocation(firstResult);
+        
+        // Zoom to location if map is available
+        if (mapRef.current) {
+          const map = mapRef.current;
+          map.setView([firstResult.lat, firstResult.lon], 13);
+        }
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+    }
   };
+
+  const handleLocationSelect = (location: SearchResult) => {
+    setSelectedLocation(location);
+    if (mapRef.current) {
+      const map = mapRef.current;
+      map.setView([location.lat, location.lon], 13);
+    }
+    setSearchResults([]);
+  };
+
+
 
   return (
     <div className="h-screen relative flex flex-col bg-gray-900">
@@ -234,10 +272,10 @@ const UserView: React.FC = () => {
               <BookmarkIcon className="w-6 h-6 text-white" />
             </button>
             <button 
-              onClick={() => console.log("Compass button clicked")}
+              onClick={() => setShowSearchBox(true)}
               className="p-3 hover:bg-blue-700/50 rounded-full transition-all duration-300 ease-in-out transform hover:scale-110"
             >
-              <CompassIcon className="w-6 h-6 text-white" />
+              <Search className="w-6 h-6 text-white" />
             </button>
             <button 
               onClick={handleProfile}
@@ -248,9 +286,113 @@ const UserView: React.FC = () => {
           </div>
         </nav>
       </motion.div>
+
+      <AnimatePresence>
+        {showProfile && (
+          <motion.div 
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 20 }}
+            className="fixed top-0 right-0 h-full w-80 bg-gray-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50"
+          >
+            <div className="p-6 h-full text-white">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-2xl font-bold">Profile</h2>
+                <button 
+                  onClick={() => setShowProfile(false)}
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+                    <UserIcon className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">User Name</h3>
+                    <p className="text-sm text-gray-400">user@example.com</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                    <MapIcon className="w-5 h-5" />
+                    <span>My Routes</span>
+                  </button>
+                  <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                    <MessageSquare className="w-5 h-5" />
+                    <span>Messages</span>
+                  </button>
+                  <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                    <Settings className="w-5 h-5" />
+                    <span>Settings</span>
+                  </button>
+                  <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                    <AlertCircle className="w-5 h-5" />
+                    <span>Help & Support</span>
+                  </button>
+                </div>
+
+                <button className="w-full p-4 text-left text-red-400 hover:bg-white/10 rounded-lg mt-auto transition-colors">
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {showSearchBox && (
+        <div className="absolute z-50 top-24 left-5 p-4 bg-gray-900/95 backdrop-blur-xl border-l border-white/20 shadow-2xl border rounded-lg w-80">
+        <div className="flex items-center justify-between mb-2">
+          <input
+            type="text"
+            placeholder="Search city, country..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            className="border border-white/10 text-gray-100 p-2 w-full rounded-md mr-2 bg-gray-900/95 focus:outline-none"
+          />
+          <button onClick={handleSearch}>
+            <Search className="w-6 h-6 mr-5 text-gray-400 hover:text-gray-200" />
+          </button>
+          <button onClick={() => setShowSearchBox(false)}>
+            <X className="w-6 h-6 text-gray-400 hover:text-gray-200" />
+          </button>
+        </div>
+
+        {/* Search Results */}
+        {searchResults.length > 0 && (
+          <div className="max-h-48 overflow-y-auto bg-gray-800/50 rounded-md mt-2">
+            {searchResults.slice(0, 5).map((result, index) => (
+              <button
+                key={index}
+                onClick={() => handleLocationSelect(result)}
+                className="w-full p-2 text-left hover:bg-white/10 flex items-center space-x-2"
+              >
+                <MapPin className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-200 truncate">
+                  {result.display_name}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      )}
+      
     </div>
   );
 };
 
-export default UserView;
 
+
+
+
+
+
+export default UserView;
