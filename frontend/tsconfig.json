@@ -8,6 +8,7 @@
     "moduleResolution": "Node", // Resolves modules in Node.js style
     "skipLibCheck": true, // Skips type-checking of declaration files for faster builds
     "resolveJsonModule": true, // Allows importing JSON files
+    "allowSyntheticDefaultImports": true,
     "outDir": "dist", // Specifies the output folder for compiled files
     "rootDir": "src", // Specifies the root folder of your source files
     "forceConsistentCasingInFileNames": true, // Enforce case-sensitive imports

@@ -156,7 +156,7 @@ export default function LandingPage({ setRole }: LandingPageProps) {
           </div>
 
           {/* Features Section */}
-          <div className="py-12 lg:py-20">
+          <div className="py-12 lg:py-20 font-helvetica">
             <h2 className="text-5xl lg:text-5xl xl:text-8xl font-bold text-center mb-8 sm:mb-12 text-white font-agharti font-bold">
               WHY CHOOSE OUR <span className="text-red-600">BUS</span> TRACKER?
             </h2>

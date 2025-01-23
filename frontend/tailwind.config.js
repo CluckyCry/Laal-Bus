@@ -10,6 +10,8 @@ export default {
 		fontFamily: {
 		  agharti: ['Agharti', 'sans-serif'], // Add your custom font here
 		  oldMoney: ['OldMoney', 'serif'], // Add Old Money font here
+		  helvetica: ['Helvetica', 'serif'], 
+
 		},
 		fontWeight: {
 			light: '300',

@@ -253,4 +253,3 @@ const UserView: React.FC = () => {
 };
 
 export default UserView;
-

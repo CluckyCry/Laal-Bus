@@ -1,6 +1,9 @@
+@import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -105,6 +108,13 @@
   font-family: 'Old Money';
   src: url('/fonts/OldMoneyV1a.otf') format('woff2'),
        url('/fonts/OldMoneyV1a.otf') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Helvetica light';
+  src: url('/fonts/helvetica-light-587ebe5a59211.ttf') format('woff2'),
+       url('/fonts/helvetica-light-587ebe5a59211.ttf') format('woff');
   font-weight: normal;
   font-style: normal;
 }
