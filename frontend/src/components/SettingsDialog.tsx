@@ -1,24 +1,21 @@
-import type React from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import React from "react"
 import { useSettings } from "./contexts/SettingsContext"
+import { useNavigate } from "react-router-dom"
 
 const SettingsDialog: React.FC = () => {
   const { isSettingsOpen, closeSettings } = useSettings()
+  const navigate = useNavigate()
+
+  const handleOpenSettingsPage = () => {
+    closeSettings() // Optional: Close the modal if it's used anywhere else.
+    navigate("/settings") // Navigate to the settings page.
+  }
 
   return (
-    <Dialog open={isSettingsOpen} onOpenChange={closeSettings}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
-        </DialogHeader>
-        <div className="mt-4">
-          {/* Add your settings content here */}
-          <p>Settings content goes here</p>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <button onClick={handleOpenSettingsPage} className="btn">
+      Open Settings
+    </button>
   )
 }
 
 export default SettingsDialog
-

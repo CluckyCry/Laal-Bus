@@ -1,28 +1,16 @@
-'use client'
+"use client"
 
-import React, { useEffect, useState, useRef } from 'react'
-import { 
-  MapContainer, 
-  TileLayer, 
-  Marker, 
-  Popup 
-} from 'react-leaflet'
-import { LatLngExpression } from 'leaflet'
-import { motion } from 'framer-motion'
-import { 
-  AlertCircle, 
-  AlertTriangle, 
-  MessageSquare, 
-  User, 
-  Settings, 
-  Loader2 
-} from 'lucide-react'
-import 'leaflet/dist/leaflet.css'
-import io from 'socket.io-client'
-import { Button } from '@/components/ui/button'
-import ProfileSidebar from './ProfileSIdebar'
-import { useSettings } from './contexts/SettingsContext'
-
+import type React from "react"
+import { useEffect, useState, useRef } from "react"
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+import type { LatLngExpression } from "leaflet"
+import { motion, AnimatePresence } from "framer-motion"
+import { AlertCircle, AlertTriangle, MessageSquare, User, UserIcon, Settings, Loader2, X, MapIcon } from "lucide-react"
+import "leaflet/dist/leaflet.css"
+import io from "socket.io-client"
+import { Button } from "@/components/ui/button"
+import { useSettings } from "./contexts/SettingsContext"
+import { useNavigate } from "react-router-dom"
 
 interface DriverViewProps {
   onLogout: () => void
@@ -31,14 +19,15 @@ interface DriverViewProps {
 const DriverView: React.FC<DriverViewProps> = ({ onLogout }) => {
   const [position, setPosition] = useState<LatLngExpression | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const { openSettings } = useSettings()
+  const [showProfile, setShowProfile] = useState(false)
+  const { openSettings, closeSettings } = useSettings()
   const socketRef = useRef<any>(null)
+  const navigate = useNavigate()
 
   // Create socket connection once
   useEffect(() => {
     socketRef.current = io(import.meta.env.VITE_BACKEND_URL, {
-      autoConnect: false
+      autoConnect: false,
     })
 
     return () => {
@@ -52,18 +41,15 @@ const DriverView: React.FC<DriverViewProps> = ({ onLogout }) => {
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       (location) => {
-        const newPosition: [number, number] = [
-          location.coords.latitude,
-          location.coords.longitude,
-        ]
+        const newPosition: [number, number] = [location.coords.latitude, location.coords.longitude]
         setPosition(newPosition)
         setIsLoading(false)
       },
       (error) => {
-        console.error('Error getting location:', error)
+        console.error("Error getting location:", error)
         setIsLoading(false)
       },
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: true },
     )
 
     return () => navigator.geolocation.clearWatch(watchId)
@@ -79,12 +65,12 @@ const DriverView: React.FC<DriverViewProps> = ({ onLogout }) => {
       const timeoutId = setTimeout(() => {
         console.log("Emitting location with ID:", socketRef.current.id, {
           id: socketRef.current.id,
-          position: position
+          position: position,
         })
 
-        socketRef.current.emit('updateLocation', { 
-          id: socketRef.current.id, 
-          position: position 
+        socketRef.current.emit("updateLocation", {
+          id: socketRef.current.id,
+          position: position,
         })
       }, 100)
 
@@ -92,30 +78,30 @@ const DriverView: React.FC<DriverViewProps> = ({ onLogout }) => {
     }
   }, [position])
 
- //bottombar 
- 
- const handleEmergency = () => {
-  console.log("Emergency button pressed")
-  // Add emergency logic here
-}
+  //bottombar
 
-const handleMessage = () => {
-  console.log("Message button pressed")
-  // Add messaging logic here
-}
+  const handleEmergency = () => {
+    console.log("Emergency button pressed")
+    // Add emergency logic here
+  }
 
-const handleProfile = () => {
-  console.log("Profile button pressed")
-  setIsProfileOpen(true)
-}
+  const handleMessage = () => {
+    console.log("Message button pressed")
+    // Add messaging logic here
+  }
 
-const handleSettings = () => {
-  console.log("Settings button pressed")
-  openSettings()
-}
+  const handleProfile = () => {
+    setShowProfile(!showProfile)
+  }
 
-    return (
-      <>
+  const handleSettings = () => {
+    closeSettings() // Close the settings dialog if it's open
+    setShowProfile(false) // Close the profile sidebar
+    navigate("/settings") // Navigate to the settings page
+  }
+
+  return (
+    <>
       <div className="h-screen relative flex flex-col bg-gray-900">
         {/* Animated Background */}
         <div className="fixed inset-0 z-0">
@@ -225,7 +211,69 @@ const handleSettings = () => {
             </div>
           </nav>
         </motion.div>
-        <ProfileSidebar isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+        <AnimatePresence>
+          {showProfile && (
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 20 }}
+              className="fixed top-0 right-0 h-full w-80 bg-gray-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50"
+            >
+              <div className="p-6 h-full text-white">
+                <div className="flex justify-between items-center mb-8">
+                  <h2 className="text-2xl font-bold">Profile</h2>
+                  <button
+                    onClick={() => setShowProfile(false)}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+                      <UserIcon className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Driver Name</h3>
+                      <p className="text-sm text-gray-400">driver@example.com</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                      <MapIcon className="w-5 h-5" />
+                      <span>My Routes</span>
+                    </button>
+                    <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                      <MessageSquare className="w-5 h-5" />
+                      <span>Messages</span>
+                    </button>
+                    <button 
+                    onClick={handleSettings}
+                    className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                      <Settings className="w-5 h-5" />
+                      <span>Settings</span>
+                    </button>
+                    <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                      <AlertCircle className="w-5 h-5" />
+                      <span>Help & Support</span>
+                    </button>
+                  </div>
+
+                  <button
+                    className="w-full p-4 text-left text-red-400 hover:bg-white/10 rounded-lg mt-auto transition-colors"
+                    onClick={() => navigate("/")}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </>
   )
