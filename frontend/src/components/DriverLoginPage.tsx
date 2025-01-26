@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, LockIcon, Loader2 } from 'lucide-react';
 import io from 'socket.io-client';
@@ -12,6 +13,7 @@ const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, on
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +35,9 @@ const DriverLoginPage: React.FC<DriverLoginPageProps> = ({ onSuccessfulLogin, on
         const socket = io(import.meta.env.VITE_BACKEND_URL);
         socket.emit('driver-login');
         onSuccessfulLogin();
+        //navigate to driverview after succesfull login
+        navigate('/driverview');
+
       } else {
         setError(data.message || 'Login failed');
       }

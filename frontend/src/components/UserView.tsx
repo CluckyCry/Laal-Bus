@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Route, useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import { LatLngExpression } from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,6 +21,7 @@ interface SearchResult {
 }
 
 const UserView: React.FC = () => {
+  const navigate = useNavigate();
   const [driverLocations, setDriverLocations] = useState<DriverLocation[]>([]);
   const [followingDriverId, setFollowingDriverId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -327,7 +329,9 @@ const UserView: React.FC = () => {
                     <MessageSquare className="w-5 h-5" />
                     <span>Messages</span>
                   </button>
-                  <button className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
+                  <button 
+                  onClick={() => navigate("/settings")}
+                  className="w-full p-4 text-left hover:bg-white/10 rounded-lg transition-colors flex items-center space-x-3">
                     <Settings className="w-5 h-5" />
                     <span>Settings</span>
                   </button>

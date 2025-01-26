@@ -9,13 +9,13 @@ import { Input } from '@/components/ui/input'
 import { Navbar } from './Navbar'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import { useNavigate } from 'react-router-dom'
 
 type LandingPageProps = {
   setRole: (role: 'none' | 'driver' | 'user') => void
 }
 
-// Custom component to handle search and map control
-function SearchHandler({ searchQuery }: { searchQuery: string }) {
+const SearchHandler = ({ searchQuery }: { searchQuery: string }) => {
   const map = useMap()
 
   React.useEffect(() => {
@@ -46,9 +46,20 @@ function SearchHandler({ searchQuery }: { searchQuery: string }) {
   return null
 }
 
-export default function LandingPage({ setRole }: LandingPageProps) {
+const LandingPage: React.FC<LandingPageProps> = ({ setRole }) => {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [mapCenter, setMapCenter] = useState<[number, number]>([24.8607, 67.0011]) // Default coordinates
+
+  const handlePassengerClick = () => {
+    setRole('user')
+    navigate('/userview')
+  }
+
+  const handleDriverClick = () => {
+    setRole('driver')
+    navigate('/driverlogin')
+  }
 
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-red-50 to-white overflow-x-hidden">
@@ -65,7 +76,7 @@ export default function LandingPage({ setRole }: LandingPageProps) {
       {/* Overlay Content */}
       <div className="relative z-10">
         <Navbar />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 ">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center justify-between py-12 lg:py-20 space-y-8 lg:space-y-0 lg:space-x-8">
             <div className="lg:w-1/2 text-center lg:text-left w-full">
               <motion.h1
@@ -74,11 +85,12 @@ export default function LandingPage({ setRole }: LandingPageProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                TRACK YOUR BUS IN{' '} <br></br>
+                TRACK YOUR BUS IN{' '}
+                <br />
                 <span className="text-red-600">REAL-TIME</span>
               </motion.h1>
               <motion.p
-                className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 font-oldMoney "
+                className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 font-oldMoney"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
@@ -90,7 +102,7 @@ export default function LandingPage({ setRole }: LandingPageProps) {
                 <Button
                   size="lg"
                   className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
-                  onClick={() => setRole('driver')}
+                  onClick={handleDriverClick}
                 >
                   <Bus className="mr-2 h-5 w-5" />
                   I'm a Driver
@@ -99,7 +111,7 @@ export default function LandingPage({ setRole }: LandingPageProps) {
                   size="lg"
                   variant="outline"
                   className="w-full sm:w-auto border-red-600 text-red-600 hover:bg-red-50"
-                  onClick={() => setRole('user')}
+                  onClick={handlePassengerClick}
                 >
                   <User className="mr-2 h-5 w-5" />
                   I'm a Passenger
@@ -121,9 +133,6 @@ export default function LandingPage({ setRole }: LandingPageProps) {
                             placeholder="Search your destination..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) =>
-                              setSearchQuery((e.target as HTMLInputElement).value) 
-                            }
                           />
                           <button
                             onClick={() => setSearchQuery(searchQuery)}
@@ -146,8 +155,6 @@ export default function LandingPage({ setRole }: LandingPageProps) {
                         />
                         <SearchHandler searchQuery={searchQuery} />
                       </MapContainer>
-
-                      
                     </div>
                   </div>
                 </Card>
@@ -157,7 +164,7 @@ export default function LandingPage({ setRole }: LandingPageProps) {
 
           {/* Features Section */}
           <div className="py-12 lg:py-20 font-helvetica">
-            <h2 className="text-5xl lg:text-5xl xl:text-8xl font-bold text-center mb-8 sm:mb-12 text-white font-agharti font-bold">
+            <h2 className="text-5xl lg:text-5xl xl:text-8xl font-bold text-center mb-8 sm:mb-12 text-white font-agharti">
               WHY CHOOSE OUR <span className="text-red-600">BUS</span> TRACKER?
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -184,6 +191,7 @@ export default function LandingPage({ setRole }: LandingPageProps) {
   )
 }
 
+
 const features = [
   {
     title: 'Real-Time Tracking',
@@ -201,3 +209,5 @@ const features = [
     icon: <User className="w-6 h-6 text-red-600" />,
   },
 ]
+
+export default LandingPage;
