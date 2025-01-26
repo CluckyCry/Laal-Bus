@@ -51,7 +51,6 @@ app.post("/driver/login", async (req, res) => {
 // New route to get the number of active drivers
 app.get("/drivers/active-count", async (req, res) => {
   try {
-    console.log(Driver)
     const count = await Driver.countDocuments({ isActive: true });
     res.json({ count });
   } catch (error) {
@@ -105,9 +104,8 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("disconnect", async () => {
-    await Driver.findOneAndUpdate(
-      { socketId: socket.id },
-      { isActive: false }
+    await Driver.findOneAndDelete(
+      { socketId: socket.id, isActive: true },
     );
     io.emit("driverCheck", socket.id);
     io.emit("active-drivers-updated");
