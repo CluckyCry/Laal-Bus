@@ -21,7 +21,6 @@ app.use(express.json());
 
 // MongoDB connection
 const mongoUri = process.env.MONGODB_URI;
-console.log(mongoUri, process.env)
 if (!mongoUri) {
   throw new Error("MONGODB_URI is not defined in the environment variables");
 }
