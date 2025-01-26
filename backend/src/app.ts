@@ -3,9 +3,9 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import cors from "cors";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import {config} from "dotenv";
 
-dotenv.config();
+config();
 
 const app = express();
 const server = http.createServer(app);
@@ -20,7 +20,8 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-const mongoUri = process.env.MONGODB_URI;
+const mongoUri = process.env.PORT;
+console.log(mongoUri, process.env)
 if (!mongoUri) {
   throw new Error("MONGODB_URI is not defined in the environment variables");
 }

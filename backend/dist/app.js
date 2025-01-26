@@ -17,8 +17,8 @@ const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
@@ -31,6 +31,7 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // MongoDB connection
 const mongoUri = process.env.MONGODB_URI;
+console.log(mongoUri);
 if (!mongoUri) {
     throw new Error("MONGODB_URI is not defined in the environment variables");
 }
