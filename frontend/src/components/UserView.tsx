@@ -96,6 +96,7 @@ const UserView: React.FC = () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/drivers/active-count`);
         const data = await response.json();
+        console.log(data.count)
         setActiveDriversCount(data.count);
       } catch (error) {
         console.error("Error fetching active drivers count:", error);

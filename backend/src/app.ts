@@ -51,6 +51,7 @@ app.post("/driver/login", async (req, res) => {
 // New route to get the number of active drivers
 app.get("/drivers/active-count", async (req, res) => {
   try {
+    console.log(Driver)
     const count = await Driver.countDocuments({ isActive: true });
     res.json({ count });
   } catch (error) {
