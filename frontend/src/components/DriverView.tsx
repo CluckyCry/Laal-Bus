@@ -24,6 +24,8 @@ const DriverView: React.FC<DriverViewProps> = ({ onLogout }) => {
   const socketRef = useRef<any>(null)
   const navigate = useNavigate()
 
+  console.log(position)
+
   // Create socket connection once
   useEffect(() => {
     socketRef.current = io(import.meta.env.VITE_BACKEND_URL, {
